@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:cloudflare_turnstile/cloudflare_turnstile.dart';
+import 'package:flutter_turnstile/cloudflare_turnstile.dart';
 
 void main() {
   test('adds one to input values', () {
