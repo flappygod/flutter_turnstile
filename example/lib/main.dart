@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
     size: TurnstileSize.normal,
     theme: TurnstileTheme.light,
     refreshExpired: TurnstileRefreshExpired.manual,
-    language: 'ru',
+    language: 'zh',
     retryAutomatically: false,
   );
 
@@ -39,64 +39,27 @@ class _MyAppState extends State<MyApp> {
       home: Builder(
         builder: (context) => Scaffold(
           body: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 700),
-                    child: _token != null ? Text(_token!) : const CircularProgressIndicator(),
-                  ),
-                  const SizedBox(height: 48.0),
-                  CloudFlareTurnstile(
-                    siteKey: '3x00000000000000000000FF',
-                    options: _options,
-                    controller: _controller,
-                    onTokenReceived: (token) {
-                      setState(() {
-                        _token = token;
-                      });
-                    },
-                    onTokenExpired: () {},
-                    onError: (error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(error)),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 48.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            _token = null;
-                          });
-
-                          await _controller.refreshToken();
-                        },
-                        child: const Text('Refresh Token'),
-                      ),
-                      const SizedBox(width: 16.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          _controller.isExpired().then((isExpired) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Token is ${isExpired ? "Expired" : "Valid"}'),
-                              ),
-                            );
-                          });
-                        },
-                        child: const Text('Validate Token'),
-                      ),
-                    ],
-                  ),
-                ],
+            child: Container(
+              color: Colors.black,
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: CloudFlareTurnstile(
+                siteKey: '3x00000000000000000000FF',
+                baseUrl: "https://dev.api.bossjob.com",
+                options: _options,
+                controller: _controller,
+                onTokenReceived: (token) {
+                  setState(() {
+                    _token = token;
+                  });
+                },
+                onTokenExpired: () {},
+                onError: (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(error)),
+                  );
+                },
               ),
-            ),
+            )
           ),
         ),
       ),
