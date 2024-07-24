@@ -171,7 +171,7 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   void _handleJavaScriptChannel(String message) {
     Map data = jsonDecode(message);
 
-    /*switch (data['method']) {
+    switch (data['method']) {
       case "TurnstileToken":
         widget.controller?.newToken = data['value'];
         widget.onTokenReceived?.call(data['value']);
@@ -191,7 +191,7 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       case "TokenExpired":
         widget.onTokenExpired?.call();
         break;
-    }*/
+    }
   }
 
   void _registerJavaScriptChannel() {
