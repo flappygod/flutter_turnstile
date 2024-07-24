@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_turnstile/widget/turnstile_widget.dart';
-import 'package:flutter_turnstile/widget/turnstile_controller.dart';
+import 'package:flutter_turnstile/controller/turnstile_controller.dart';
+import 'package:flutter_turnstile/options/turnstile_options.dart';
 
 void main() {
   runApp(const MyApp());

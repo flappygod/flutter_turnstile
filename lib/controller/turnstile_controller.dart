@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_turnstile/widget/turnstile_controller_interface.dart' as i;
+import 'package:flutter_turnstile/controller/turnstile_controller_interface.dart' as i;
 
 
 class TurnstileController extends ChangeNotifier implements i.TurnstileController<dynamic> {
