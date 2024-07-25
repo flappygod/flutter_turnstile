@@ -11,7 +11,7 @@ const String appFunctionBridge = "BossJobAppBridge";
 const String appFunctionPrefix = "BossJobApp";
 
 ///CloudFlareTurnstile
-class CloudFlareTurnstile extends StatefulWidget {
+class CloudFlareTurnstile extends StatefulWidget{
   /// This [siteKey] is associated with the corresponding widget configuration
   /// and is created upon the widget creation.
   ///
@@ -51,7 +51,7 @@ class CloudFlareTurnstile extends StatefulWidget {
   ///   },
   /// ),
   /// ```
-  final OnTokenRecived? onTokenReceived;
+  final OnTokenReceived? onTokenReceived;
 
   /// A Callback invoke when the token expires and does not
   /// reset the widget.
@@ -88,7 +88,7 @@ class CloudFlareTurnstile extends StatefulWidget {
     required this.siteKey,
     this.action,
     this.cData,
-    this.baseUrl = 'https://www.baidu.com/',
+    this.baseUrl = 'http://localhost/',
     TurnstileOptions? options,
     this.controller,
     this.onTokenReceived,
@@ -112,6 +112,7 @@ class CloudFlareTurnstile extends StatefulWidget {
 
   @override
   State<CloudFlareTurnstile> createState() => _CloudFlareTurnstileState();
+
 }
 
 ///CloudFlareTurnstile state
@@ -123,9 +124,9 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
 
   String? widgetId;
 
-  bool _isWidgetReady = false;
+  // bool _isWidgetReady = false;
 
-  final String _readyJSHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\"}));";
+  final String _readyJSHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
   final String _tokenReceivedJSHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
   final String _errorJSHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
   final String _tokenExpiredJSHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
@@ -156,7 +157,6 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(NavigationDelegate(onPageFinished: (String url) {
-        ///_registerJavaScriptChannel();
       }));
     _controller.loadHtmlString(data, baseUrl: widget.baseUrl);
   }
@@ -185,7 +185,9 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
         break;
       case "TurnstileReady":
         setState(() {
-          _isWidgetReady = data['value'];
+          if (data['value'] == "true") {
+            // _isWidgetReady = true;
+          }
         });
         break;
       case "TokenExpired":
@@ -193,39 +195,6 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
         break;
     }
   }
-
-  void _registerJavaScriptChannel() {
-    StringBuffer jsStrBuffer = StringBuffer();
-
-    ///TurnstileToken
-    jsStrBuffer.write("$appFunctionPrefix.TurnstileToken = function (){ ");
-    jsStrBuffer.write("  $appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":\"true\"}));");
-    jsStrBuffer.write("};");
-
-    ///TurnstileError
-    jsStrBuffer.write("$appFunctionPrefix.TurnstileError = function (){ ");
-    jsStrBuffer.write("  $appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\"\"value\":\"token\"}));");
-    jsStrBuffer.write("};");
-
-    ///TurnstileWidgetId
-    jsStrBuffer.write("$appFunctionPrefix.TurnstileWidgetId = function (){ ");
-    jsStrBuffer.write("  $appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\"\"value\":\"code\"}));");
-    jsStrBuffer.write("};");
-
-    ///TurnstileReady
-    jsStrBuffer.write("$appFunctionPrefix.TurnstileReady = function (){ ");
-    jsStrBuffer.write("  $appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\"}));");
-    jsStrBuffer.write("};");
-
-    ///TokenExpired
-    jsStrBuffer.write("$appFunctionPrefix.TokenExpired = function (){ ");
-    jsStrBuffer.write("  $appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"\"value\":\"widgetId\"}));");
-    jsStrBuffer.write("};");
-
-    _controller.runJavaScript(jsStrBuffer.toString());
-  }
-
-  final double _borderWidth = 2.0;
 
   Widget get _view => WebViewWidget(controller: _controller);
 
@@ -236,14 +205,5 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       height: 100,
       child: _view,
     );
-    /*return switch (widget.options.mode) {
-      TurnstileMode.invisible => SizedBox.shrink(child: _view),
-      _ => AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        width: _isWidgetReady ? widget.options.size.width + _borderWidth : 0,
-        height: _isWidgetReady ? widget.options.size.height + _borderWidth : 0,
-        child: _view,
-      ),
-    };*/
   }
 }

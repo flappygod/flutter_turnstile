@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_turnstile/controller/turnstile_controller_interface.dart' as i;
+import 'package:webview_flutter/webview_flutter.dart';
 
 
-class TurnstileController extends ChangeNotifier implements i.TurnstileController<dynamic> {
+class TurnstileController extends ChangeNotifier{
   /// The connector associated with the controller.
-  @override
-  late dynamic connector;
+  late WebViewController connector;
+
+  String? _token;
+
+  late String _widgetId;
 
   /// Get current token
-  @override
-  String? get token => throw UnimplementedError('Cannot call this function on the facade.');
+  String? get token => _token;
 
   /// Sets a new connector.
-  @override
   void setConnector(newConnector) {
-    throw UnimplementedError('Cannot call this function on the facade.');
+    connector = newConnector;
   }
 
   /// Sets a new token.
-  @override
   set newToken(String token) {
-    throw UnimplementedError('Cannot call this function on the facade.');
+    _token = token;
+    notifyListeners();
   }
 
   /// Sets the Turnstile current widget id.
-  @override
   set widgetId(String id) {
-    throw UnimplementedError('Cannot call this function on the facade.');
+    _widgetId = id;
   }
 
   /// The function can be called when widget mey become expired and
@@ -41,9 +41,8 @@ class TurnstileController extends ChangeNotifier implements i.TurnstileControlle
   ///
   /// await controller.refreshToken();
   /// ```
-  @override
   Future<void> refreshToken() async {
-    throw UnimplementedError('Cannot call this function on the facade.');
+    await connector.runJavaScript("""turnstile.reset(`$_widgetId`)""");
   }
 
   /// The function that check if a widget has expired by either
@@ -61,8 +60,9 @@ class TurnstileController extends ChangeNotifier implements i.TurnstileControlle
   /// bool isTokenExpired = await controller.isExpired();
   /// print(isTokenExpired);
   /// ```
-  @override
-  Future<bool> isExpired() {
-    throw UnimplementedError('Cannot call this function on the facade.');
+  Future<bool> isExpired() async {
+    final result = await connector.runJavaScriptReturningResult("""turnstile.isExpired(`$_widgetId`);""");
+    return result == 'true';
   }
+
 }

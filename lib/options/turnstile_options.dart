@@ -89,7 +89,7 @@ enum TurnstileRefreshExpired { auto, manual, never }
 
 enum TurnstileRefreshTimeout { auto, manual, never }
 
-//function
-typedef OnTokenRecived = Function(String token);
+///options
+typedef OnTokenReceived = Function(String token);
 typedef OnTokenExpired = Function();
 typedef OnError = Function(String error);
