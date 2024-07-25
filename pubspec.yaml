@@ -1,7 +1,7 @@
 name: flutter_turnstile
-description: cloudflare_turnstile
-version: 0.0.1
-homepage:
+description: A Flutter package to integrate turnstile functionality for secure access control systems.
+version: 1.0.0
+repository: https://github.com/chen-golang/flutter_turnstile
 
 environment:
   sdk: '>=3.4.4 <4.0.0'
