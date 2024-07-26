@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:flutter/widgets.dart';
 import 'package:flutter_turnstile/options/turnstile_options.dart';
+import 'package:flutter/services.dart';
 
 ///define html
-String htmlData({
+Future<String> htmlData({
   required String siteKey,
   String? action,
   String? cData,
@@ -11,10 +15,19 @@ String htmlData({
   required String onTurnstileError,
   required String onTokenExpired,
   required String onWidgetCreated,
-}) {
+}) async {
+  ///正则匹配TURNSTILE_*类型的文本，分case进行替换
   RegExp exp = RegExp(
       r'<TURNSTILE_(SITE_KEY|ACTION|CDATA|THEME|SIZE|LANGUAGE|RETRY|RETRY_INTERVAL|REFRESH_EXPIRED|REFRESH_TIMEOUT|READY|TOKEN_RECEIVED|ERROR|TOKEN_EXPIRED|CREATED)>');
-  String? replacedText = _source.replaceAllMapped(exp, (match) {
+
+  ///为了更直观，我们直接将source提出去到trunstile.html文件中去，然后在代码中把它加载进来，当然你得知道其路径。,因为这里是耗时操作，所以我们使用了 async ,返回也是Future<String>
+  ByteData bytes = await rootBundle.load("packages/flutter_turnstile/data/trunstile.html");
+
+  // 将 ByteData 转换为 Uint8List
+  Uint8List uint8list = bytes.buffer.asUint8List();
+
+  ///替换之后的text
+  String? replacedText = utf8.decode(uint8list).replaceAllMapped(exp, (match) {
     switch (match.group(1)) {
       case 'SITE_KEY':
         return siteKey;
@@ -53,73 +66,3 @@ String htmlData({
 
   return replacedText;
 }
-
-String _source = """
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport"
-      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
-</head>
-
-<body>
-   <div id="cf-turnstile"></div>
-   <script>
-   
-      function renderWidgets(){
-        <TURNSTILE_READY>
-         const widgetId = turnstile.render('#cf-turnstile', {
-            sitekey: '<TURNSTILE_SITE_KEY>',
-            action: '<TURNSTILE_ACTION>',
-            cData: '<TURNSTILE_CDATA>',
-            theme: '<TURNSTILE_THEME>',
-            size: '<TURNSTILE_SIZE>',
-            language: '<TURNSTILE_LANGUAGE>',
-            retry: '<TURNSTILE_RETRY>',
-            'retry-interval': parseInt('<TURNSTILE_RETRY_INTERVAL>'),
-            'refresh-expired': '<TURNSTILE_REFRESH_EXPIRED>',
-            'refresh-timeout': '<TURNSTILE_REFRESH_TIMEOUT>',
-            callback: function (token) {
-               <TURNSTILE_TOKEN_RECEIVED>
-            },
-            'error-callback': function (code) {
-               <TURNSTILE_ERROR>
-            },
-            'expired-callback': function () {
-               <TURNSTILE_TOKEN_EXPIRED>
-            }
-         });
-         <TURNSTILE_CREATED>
-      };
-      
-      
-      function checkReadyToRender(){
-         turnstile.ready(function () {
-         if(BossJobAppBridge.postMessage){
-           renderWidgets();
-         }else{
-           setTimeout(() => {
-              checkReadyToRender();
-              }, 200);
-         }
-         });
-      };
-   
-   
-      checkReadyToRender();
-      
-   </script>
-   <style>
-      * {
-         overflow: hidden;
-         margin: 0;
-         padding: 0;
-      }
-   </style>
-</body>
-
-</html>
-""";

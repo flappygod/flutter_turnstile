@@ -39,8 +39,9 @@ class _MyAppState extends State<MyApp> {
       home: Builder(
         builder: (context) => Scaffold(
           body: Center(
+            ///自动撑开
               child: Container(
-            color: Colors.black,
+            color: Colors.red,
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             child: CloudFlareTurnstile(
               siteKey: '3x00000000000000000000FF',

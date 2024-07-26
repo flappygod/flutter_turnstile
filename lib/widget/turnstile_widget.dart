@@ -1,6 +1,6 @@
 import 'package:flutter_turnstile/controller/turnstile_controller.dart';
-import 'package:flutter_turnstile/data/html_data.dart';
 import 'package:flutter_turnstile/options/turnstile_options.dart';
+import 'package:flutter_turnstile/data/html_data.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,75 +12,37 @@ const String appFunctionPrefix = "BossJobApp";
 
 ///CloudFlareTurnstile
 class CloudFlareTurnstile extends StatefulWidget {
-  /// This [siteKey] is associated with the corresponding widget configuration
-  /// and is created upon the widget creation.
-  ///
-  /// It`s likely generated or obtained from the CloudFlare dashboard.
+  /// siteKey 参数用于传递给html data中的Js代码
   final String siteKey;
 
-  /// A customer value that can be used to differentiate widgets under the
-  /// same sitekey in analytics and which is returned upon validation.
-  ///
-  /// This can only contain up to 32 alphanumeric characters including _ and -.
+  /// action 参数同上，具体含义查询JS Turnstile 文档
   final String? action;
 
   /// A customer payload that can be used to attach customer data to the
   /// challenge throughout its issuance and which is returned upon validation.
-  ///
   /// This can only contain up to 255 alphanumeric characters including _ and -.
+  /// 同上
   final String? cData;
 
-  /// A base url of turnstile Site
+  /// A base url of turnstile Site，基础URL
   final String baseUrl;
 
-  /// A Turnstile widget options
+  /// A Turnstile widget options 参数配置类，类中又区分了不少东西
   final TurnstileOptions options;
 
-  /// A controller for an Turnstile widget
+  /// A controller for an Turnstile widget 控制器用于控制view做操作
   final TurnstileController? controller;
 
-  /// A Callback invoked upon success of the challange.
-  /// The callback is passed a [token] that can be validated.
-  ///
-  /// example:
-  /// ```dart
-  /// CloudFlareTurnstile(
-  ///   siteKey: '0x000000000000000000000',
-  ///   onTokenRecived: (String token) {
-  ///     print('Token: $token');
-  ///   },
-  /// ),
-  /// ```
+  /// token接收到的回调代码块，外部传入，内部接收到回调后执行此回调通知外部
   final OnTokenReceived? onTokenReceived;
 
-  /// A Callback invoke when the token expires and does not
-  /// reset the widget.
-  ///
-  /// example:
-  /// ```dart
-  /// CloudFlareTurnstile(
-  ///   siteKey: '0x000000000000000000000',
-  ///   onTokenExpired: () {
-  ///     print('Token Expired');
-  ///   },
-  /// ),
-  /// ```
+  /// token 过期的回调，同上
   final OnTokenExpired? onTokenExpired;
 
-  /// A Callback invoke when there is an error
-  /// (e.g network error or challange failed).
-  ///
-  /// example:
-  /// ```dart
-  /// CloudFlareTurnstile(
-  ///   siteKey: '0x000000000000000000000',
-  ///   onError: (String error) {
-  ///     print('Error: $error');
-  ///   },
-  /// ),
-  /// ```
-  ///
-  /// Refer to [Client-side errors](https://developers.cloudflare.com/turnstile/troubleshooting/client-side-errors/).
+  ///这里是我们多加的一个回调事件，用户widget ready
+  final VoidCallback? onWidgetReady;
+
+  /// 错误的回调，同上
   final OnError? onError;
 
   CloudFlareTurnstile({
@@ -93,6 +55,7 @@ class CloudFlareTurnstile extends StatefulWidget {
     this.controller,
     this.onTokenReceived,
     this.onTokenExpired,
+    this.onWidgetReady,
     this.onError,
   }) : options = options ?? TurnstileOptions() {
     if (action != null) {
@@ -116,99 +79,128 @@ class CloudFlareTurnstile extends StatefulWidget {
 
 ///CloudFlareTurnstile state
 class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
-  ///the data used to load
-  late String data;
+  ///webView 的控制器，用于控制webView
+  late WebViewController _webViewController;
 
-  late WebViewController _controller;
+  ///下方是字符串，这个字符串其实是一段js代码，用于和htmlData拼接，最终成为一个完整的html文件以供webView加载
+  final String _onReadyHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
+  final String _onTokenHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
+  final String _onErrorHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
+  final String _onExpireHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
+  final String _onCreatedHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
 
-  String? widgetId;
-
-  // bool _isWidgetReady = false;
-
-  ///json
-  final String _readyJSHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
-  final String _tokenReceivedJSHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
-  final String _errorJSHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
-  final String _tokenExpiredJSHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
-  final String _widgetCreatedJSHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
-
-  void _initData() {
-    data = htmlData(
-      siteKey: widget.siteKey,
-      action: widget.action,
-      cData: widget.cData,
-      options: widget.options,
-      onTurnstileReady: _readyJSHandler,
-      onTokenReceived: _tokenReceivedJSHandler,
-      onTurnstileError: _errorJSHandler,
-      onTokenExpired: _tokenExpiredJSHandler,
-      onWidgetCreated: _widgetCreatedJSHandler,
-    );
-  }
-
+  ///首先进行controller的初始化，以便于控制webView
   void _initController() {
-    _controller = WebViewController()
+    _webViewController = WebViewController()
+
+      ///添加JavaScript交互，官方插件提供的方法，供交互
       ..addJavaScriptChannel(
         appFunctionBridge,
         onMessageReceived: (message) {
           _handleJavaScriptChannel(message.message);
         },
       )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-          NavigationDelegate(onPageFinished: (String url) {}));
-    _controller.loadHtmlString(data, baseUrl: widget.baseUrl);
+
+      /// JavaScript execution is not restricted.(开启js,不限制js)
+      ..setJavaScriptMode(JavaScriptMode.unrestricted);
+
+    ///设置navigation的代理，监听，我们不需要的话，完全不需要设置
+    //..setNavigationDelegate(NavigationDelegate(onPageFinished: (String url) {}));
+
+    ///这里还有个点，这里定义的_controller 是用来控制webView的，它是不会向外部暴露的，而我们其实需要通过widget中的TurnstileController来控制webView内部的一些展示，
+    ///所以需要将_controller 给到 widget.controller这个TurnstileController类型的控制器
+    ///相当于TurnstileController控制器通过一个设置进去的代理控制器控制内部webView的一个动作
+    ///但是这样设置之后又存在一些小问题，就是之前提到的，万一哪个傻用户在外部的State中，重新搞了个controller,就会导致这个新的controller中没有设置setConnector
+    ///这就需要在didUpdateWidget中做一些处理，这样更符合flutter的规范，如果不处理，正常情况下也不会存在问题，但如果遇到上方的情况，使用者会懵逼
+    ///这里有点类似代理模式
+    widget.controller?.setConnector(_webViewController);
+  }
+
+  ///初始化html数据，因为我们改为了异步加载，所以需要在文件读取完成之后
+  void _initHtmlData() {
+    htmlData(
+      siteKey: widget.siteKey,
+      action: widget.action,
+      cData: widget.cData,
+      options: widget.options,
+      onTurnstileReady: _onReadyHandler,
+      onTokenReceived: _onTokenHandler,
+      onTurnstileError: _onErrorHandler,
+      onTokenExpired: _onExpireHandler,
+      onWidgetCreated: _onCreatedHandler,
+    ).then((data) {
+      ///then中返回的就是htmlData这个方法中耗时操作完成后得到的拼接字符串
+      _webViewController.loadHtmlString(data, baseUrl: widget.baseUrl);
+    });
+  }
+
+  @override
+  void didUpdateWidget(CloudFlareTurnstile oldWidget) {
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.setConnector(null);
+      widget.controller?.setConnector(_webViewController);
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   void initState() {
-    _initData();
     _initController();
+    _initHtmlData();
     super.initState();
   }
 
   ///handle function
   void _handleJavaScriptChannel(String message) {
+    ///解析我们传过来的json字符串为map
     Map data = jsonDecode(message);
 
     switch (data['method']) {
       case "TurnstileToken":
-        widget.controller?.newToken = data['value'];
-        widget.onTokenReceived?.call(data['value']);
+
+        ///获取到token，data['value'],为了防止极小可能出现的类型问题，这里加上一个toString
+        String token = data['value'].toString();
+
+        ///将获取到的token传给controller保存起来
+        widget.controller?.newToken = token;
+
+        ///执行回调,告诉外部token获取到了
+        widget.onTokenReceived?.call(token);
         break;
       case "TurnstileError":
-        widget.onError?.call(data['value']);
+
+        ///错误的回调，通知外部有异常
+        widget.onError?.call(data['value'].toString());
         break;
       case "TurnstileWidgetId":
-        widgetId = data['value'];
+
+        ///获取到widget ID,当前state拿它没什么用，就直接删掉了，但是控制器中需要保存一下，这个widgetId是html的js代码中turnstile.render这个方法回传的id
+        ///后续会使用它控制webView加载的html中的控件，所以我们直接保存在控制器中
         widget.controller?.widgetId = data['value'];
         break;
       case "TurnstileReady":
-        setState(() {
-          if (data['value'] == "true") {
-            // _isWidgetReady = true;
-          }
-        });
+
+        ///Turnstile ready的回调，我们没用同样直接通知到外部，之前的_isWidgetReady代码是之前用来在当前界面做动画的我们暂时没有用到就先删了
+        widget.onWidgetReady?.call();
         break;
       case "TokenExpired":
+
+        ///token过期的回调
         widget.onTokenExpired?.call();
         break;
     }
   }
 
   ///get view
-  Widget get _view => WebViewWidget(controller: _controller);
+  Widget get _view => WebViewWidget(controller: _webViewController);
 
   @override
   Widget build(BuildContext context) {
+    ///这里是主要的buildView ，分析trunstile.html 中的TURNSTILE_SIZE 及之前传递的 options.size.name 我们可以认为目前这html就只支持两种大小，
+    ///normal和compact，所以我们这里暂时只能使用它的大小。
     return SizedBox(
-      width: 300,
-      height: 100,
+      width: widget.options.size.width,
+      height: widget.options.size.height,
       child: _view,
     );
   }
