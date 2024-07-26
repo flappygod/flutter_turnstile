@@ -1,8 +1,6 @@
-import 'dart:convert';
-
-import 'package:flutter/widgets.dart';
 import 'package:flutter_turnstile/options/turnstile_options.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 
 ///define html
 Future<String> htmlData({
