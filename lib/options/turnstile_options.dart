@@ -1,4 +1,4 @@
-//options
+///options
 class TurnstileOptions {
   /// The Turnstile widget mode.
   ///
@@ -62,14 +62,22 @@ class TurnstileOptions {
     this.retryAutomatically = true,
     this.refreshExpired = TurnstileRefreshExpired.auto,
     this.refreshTimeout = TurnstileRefreshTimeout.auto,
-  })  : assert(retryInterval.inMilliseconds > 0 && retryInterval.inMilliseconds <= 900000,
-  "Duration must be greater than 0 and less than or equal to 900000 milliseconds."),
-        assert(!(mode == TurnstileMode.invisible && refreshExpired == TurnstileRefreshExpired.manual),
-        "$refreshExpired is impossible in $mode, consider using TurnstileRefreshExpired.auto or TurnstileRefreshExpired.never"),
-        assert(!(mode == TurnstileMode.invisible && refreshTimeout != TurnstileRefreshTimeout.auto),
-        "$refreshTimeout has no effect on an $mode widget."),
-        assert(!(mode == TurnstileMode.nonInteractive && refreshTimeout != TurnstileRefreshTimeout.auto),
-        "$refreshTimeout has no effect on an $mode widget.");
+  })  : assert(
+            retryInterval.inMilliseconds > 0 &&
+                retryInterval.inMilliseconds <= 900000,
+            "Duration must be greater than 0 and less than or equal to 900000 milliseconds."),
+        assert(
+            !(mode == TurnstileMode.invisible &&
+                refreshExpired == TurnstileRefreshExpired.manual),
+            "$refreshExpired is impossible in $mode, consider using TurnstileRefreshExpired.auto or TurnstileRefreshExpired.never"),
+        assert(
+            !(mode == TurnstileMode.invisible &&
+                refreshTimeout != TurnstileRefreshTimeout.auto),
+            "$refreshTimeout has no effect on an $mode widget."),
+        assert(
+            !(mode == TurnstileMode.nonInteractive &&
+                refreshTimeout != TurnstileRefreshTimeout.auto),
+            "$refreshTimeout has no effect on an $mode widget.");
 }
 
 enum TurnstileMode { managed, nonInteractive, invisible }
@@ -89,7 +97,7 @@ enum TurnstileRefreshExpired { auto, manual, never }
 
 enum TurnstileRefreshTimeout { auto, manual, never }
 
-///options
+///function define
 typedef OnTokenReceived = Function(String token);
 typedef OnTokenExpired = Function();
 typedef OnError = Function(String error);

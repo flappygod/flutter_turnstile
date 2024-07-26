@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-
-class TurnstileController extends ChangeNotifier{
+class TurnstileController extends ChangeNotifier {
   /// The connector associated with the controller.
   late WebViewController connector;
 
@@ -61,8 +60,8 @@ class TurnstileController extends ChangeNotifier{
   /// print(isTokenExpired);
   /// ```
   Future<bool> isExpired() async {
-    final result = await connector.runJavaScriptReturningResult("""turnstile.isExpired(`$_widgetId`);""");
+    final result = await connector
+        .runJavaScriptReturningResult("""turnstile.isExpired(`$_widgetId`);""");
     return result == 'true';
   }
-
 }
