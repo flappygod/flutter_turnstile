@@ -39,7 +39,8 @@ class _MyAppState extends State<MyApp> {
       home: Builder(
         builder: (context) => Scaffold(
           body: Center(
-            ///自动撑开
+
+              ///自动撑开
               child: Container(
             color: Colors.red,
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),

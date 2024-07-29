@@ -83,11 +83,16 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   late WebViewController _webViewController;
 
   ///下方是字符串，这个字符串其实是一段js代码，用于和htmlData拼接，最终成为一个完整的html文件以供webView加载
-  final String _onReadyHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
-  final String _onTokenHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
-  final String _onErrorHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
-  final String _onExpireHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
-  final String _onCreatedHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
+  final String _onReadyHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
+  final String _onTokenHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
+  final String _onErrorHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
+  final String _onExpireHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
+  final String _onCreatedHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
 
   ///首先进行controller的初始化，以便于控制webView
   void _initController() {

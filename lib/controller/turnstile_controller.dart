@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 ///  3. _widgetId 也是html代码执行成功后回调设置进来的，当_connector和_widgetId齐全的时候我们就可以通过webViewWidget的控制器_connector执行一段
 ///  js代码，以达到控制webView中加载的html trunstile 控件的目的
 class TurnstileController extends ChangeNotifier {
-
-
   ///设置进来的connector，设置了之后才能通过它进行一些列控制
   WebViewController? _connector;
 
@@ -69,7 +67,8 @@ class TurnstileController extends ChangeNotifier {
   /// print(isTokenExpired);
   /// ```
   Future<bool> isExpired() async {
-    final result = await _connector?.runJavaScriptReturningResult("""turnstile.isExpired(`$_widgetId`);""");
+    final result = await _connector?.runJavaScriptReturningResult(
+        """turnstile.isExpired(`$_widgetId`);""");
     return result.toString() == 'true';
   }
 }

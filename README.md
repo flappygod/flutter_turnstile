@@ -17,5 +17,5 @@ Add the dependency to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_turnstile: ^1.0.4
+  flutter_turnstile: ^1.1.1
 

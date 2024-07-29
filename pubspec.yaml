@@ -1,6 +1,6 @@
 name: flutter_turnstile
 description: A Flutter package to integrate turnstile functionality for secure access control systems.
-version: 1.0.4
+version: 1.1.1
 repository: https://github.com/chen-golang/flutter_turnstile
 
 environment:

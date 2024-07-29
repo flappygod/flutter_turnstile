@@ -19,7 +19,8 @@ Future<String> htmlData({
       r'<TURNSTILE_(SITE_KEY|ACTION|CDATA|THEME|SIZE|LANGUAGE|RETRY|RETRY_INTERVAL|REFRESH_EXPIRED|REFRESH_TIMEOUT|READY|TOKEN_RECEIVED|ERROR|TOKEN_EXPIRED|CREATED)>');
 
   ///为了更直观，我们直接将source提出去到trunstile.html文件中去，然后在代码中把它加载进来，当然你得知道其路径。,因为这里是耗时操作，所以我们使用了 async ,返回也是Future<String>
-  ByteData bytes = await rootBundle.load("packages/flutter_turnstile/data/trunstile.html");
+  ByteData bytes =
+      await rootBundle.load("packages/flutter_turnstile/data/trunstile.html");
 
   // 将 ByteData 转换为 Uint8List
   Uint8List uint8list = bytes.buffer.asUint8List();
