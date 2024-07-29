@@ -67,8 +67,7 @@ class TurnstileController extends ChangeNotifier {
   /// print(isTokenExpired);
   /// ```
   Future<bool> isExpired() async {
-    final result = await _connector?.runJavaScriptReturningResult(
-        """turnstile.isExpired(`$_widgetId`);""");
+    final result = await _connector?.runJavaScriptReturningResult("""turnstile.isExpired(`$_widgetId`);""");
     return result.toString() == 'true';
   }
 }
