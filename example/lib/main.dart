@@ -15,11 +15,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final TurnstileController _controller = TurnstileController();
   final TurnstileOptions _options = TurnstileOptions(
+    mode: TurnstileMode.managed,
     size: TurnstileSize.normal,
     theme: TurnstileTheme.light,
-    refreshExpired: TurnstileRefreshExpired.manual,
     language: 'zh',
-    retryAutomatically: false,
+    retryAutomatically: true,
+    refreshTimeout: TurnstileRefreshTimeout.manual,
   );
 
 
@@ -42,9 +43,10 @@ class _MyAppState extends State<MyApp> {
             color: Colors.red,
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             child: CloudFlareTurnstile(
-              siteKey: '3x00000000000000000000FF',
-              // baseUrl: "https://dev.api.bossjob.com",
-              baseUrl: "https://www.baidu.com",
+              //siteKey: '3x00000000000000000000FF',
+              //baseUrl: "https://www.baidu.com",
+              siteKey: '0x4AAAAAAAJDRnSb5DfsUd2S',
+              baseUrl: "https://dev.api.bossjob.com",
               options: _options,
               controller: _controller,
               onTokenReceived: (token) {

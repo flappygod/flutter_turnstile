@@ -7,7 +7,7 @@ Future<String> htmlData({
   required String siteKey,
   String? action,
   String? cData,
-  String   type = "io",
+  String   type = "app",
   required TurnstileOptions options,
   required String onTurnstileReady,
   required String onBeforeInteractive,
