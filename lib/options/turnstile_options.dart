@@ -101,13 +101,13 @@ enum TurnstileMode {
 enum TurnstileSize {
   /// Normal size.
   ///
-  /// Dimensions: width 300, height 65.
-  normal(300, 65),
+  /// Dimensions: width 300, height 70.
+  normal(300, 70),
 
   /// Compact size.
   ///
-  /// Dimensions: width 130, height 120.
-  compact(130, 120);
+  /// Dimensions: width 130, height 125.
+  compact(130, 125);
 
   /// Creates a TurnstileSize with the specified width and height
   const TurnstileSize(

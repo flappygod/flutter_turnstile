@@ -114,6 +114,9 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
         },
       )
 
+      ///transparent
+      ..setBackgroundColor(const Color(0x00000000))
+
       /// JavaScript execution is not restricted.(开启js,不限制js)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
 
