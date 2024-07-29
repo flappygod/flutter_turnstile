@@ -12,51 +12,58 @@
             padding: 0;
         }
     </style>
+    <title></title>
 </head>
 
 <body>
 <div id="cf-turnstile"></div>
 <script>
-        function renderWidgets() {
-            turnstile.ready(function () {
-                <TURNSTILE_READY>
-                const widgetId = turnstile.render('#cf-turnstile', {
-                    sitekey: '<TURNSTILE_SITE_KEY>',
-                    action: '<TURNSTILE_ACTION>',
-                    cData: '<TURNSTILE_CDATA>',
-                    theme: '<TURNSTILE_THEME>',
-                    size: '<TURNSTILE_SIZE>',
-                    language: '<TURNSTILE_LANGUAGE>',
-                    retry: '<TURNSTILE_RETRY>',
-                    'retry-interval': parseInt('<TURNSTILE_RETRY_INTERVAL>'),
-                    'refresh-expired': '<TURNSTILE_REFRESH_EXPIRED>',
-                    'refresh-timeout': '<TURNSTILE_REFRESH_TIMEOUT>',
-                    callback: function (token) {
-                        <TURNSTILE_TOKEN_RECEIVED>
-                    },
-                    'error-callback': function (code) {
-                        <TURNSTILE_ERROR>
-                    },
-                    'expired-callback': function () {
-                        <TURNSTILE_TOKEN_EXPIRED>
-                    }
-                });
-                <TURNSTILE_CREATED>
+    function renderWidgets() {
+        turnstile.ready(function () {
+            <TURNSTILE_READY>
+            const widgetId = turnstile.render('#cf-turnstile', {
+                sitekey: '<TURNSTILE_SITE_KEY>',
+                action: '<TURNSTILE_ACTION>',
+                cData: '<TURNSTILE_CDATA>',
+                theme: '<TURNSTILE_THEME>',
+                size: '<TURNSTILE_SIZE>',
+                language: '<TURNSTILE_LANGUAGE>',
+                retry: '<TURNSTILE_RETRY>',
+                retry-interval: parseInt('<TURNSTILE_RETRY_INTERVAL>'),
+                refresh-expired: '<TURNSTILE_REFRESH_EXPIRED>',
+                refresh-timeout: '<TURNSTILE_REFRESH_TIMEOUT>',
+                callback: function (token) {
+                    <TURNSTILE_TOKEN_RECEIVED>
+                },
+                error-callback: function (code) {
+                    <TURNSTILE_ERROR>
+                },
+                expired-callback: function () {
+                    <TURNSTILE_TOKEN_EXPIRED>
+                },
+                before-interactive-callback: function () {
+                    <TURNSTILE_BEFORE_INTERACTIVE>
+                },
+                after-interactive-callback: function () {
+                    <TURNSTILE_AFTER_INTERACTIVE>
+                },
             });
-        }
+            <TURNSTILE_CREATED>
+        });
+    }
 
-        function checkReadyToRender() {
-            turnstile.ready(function () {
-                if (BossJobAppBridge.postMessage) {
-                    renderWidgets();
-                } else {
-                    setTimeout(checkReadyToRender, 200);
-                }
-            });
-        }
+    function checkReadyToRender() {
+        turnstile.ready(function () {
+            if (BossJobAppBridge.postMessage) {
+                renderWidgets();
+            } else {
+                setTimeout(checkReadyToRender, 200);
+            }
+        });
+    }
 
-        checkReadyToRender();
-    </script>
+    checkReadyToRender();
+</script>
 </body>
 
 </html>

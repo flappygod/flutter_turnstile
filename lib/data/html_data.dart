@@ -9,6 +9,8 @@ Future<String> htmlData({
   String? cData,
   required TurnstileOptions options,
   required String onTurnstileReady,
+  required String onBeforeInteractive,
+  required String onAfterInteractive,
   required String onTokenReceived,
   required String onTurnstileError,
   required String onTokenExpired,
@@ -50,6 +52,10 @@ Future<String> htmlData({
         return options.refreshTimeout.name;
       case 'READY':
         return onTurnstileReady;
+      case 'BEFORE_INTERACTIVE':
+        return onBeforeInteractive;
+      case 'AFTER_INTERACTIVE':
+        return onAfterInteractive;
       case 'TOKEN_RECEIVED':
         return onTokenReceived;
       case 'ERROR':

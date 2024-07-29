@@ -2,6 +2,7 @@ import 'package:flutter_turnstile/controller/turnstile_controller.dart';
 import 'package:flutter_turnstile/options/turnstile_options.dart';
 import 'package:flutter_turnstile/data/html_data.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -42,6 +43,12 @@ class CloudFlareTurnstile extends StatefulWidget {
   ///这里是我们多加的一个回调事件，用户widget ready
   final VoidCallback? onWidgetReady;
 
+  ///这里是我们多加的一个回调事件，BeforeInteractive
+  final VoidCallback? onWidgetBeforeInteractive;
+
+  ///这里是我们多加的一个回调事件，AfterInteractive
+  final VoidCallback? onWidgetAfterInteractive;
+
   /// 错误的回调，同上
   final OnError? onError;
 
@@ -56,6 +63,8 @@ class CloudFlareTurnstile extends StatefulWidget {
     this.onTokenReceived,
     this.onTokenExpired,
     this.onWidgetReady,
+    this.onWidgetBeforeInteractive,
+    this.onWidgetAfterInteractive,
     this.onError,
   }) : options = options ?? TurnstileOptions() {
     if (action != null) {
@@ -83,16 +92,15 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   late WebViewController _webViewController;
 
   ///下方是字符串，这个字符串其实是一段js代码，用于和htmlData拼接，最终成为一个完整的html文件以供webView加载
-  final String _onReadyHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
-  final String _onTokenHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
-  final String _onErrorHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
-  final String _onExpireHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
-  final String _onCreatedHandler =
-      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
+  final String _onReadyHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
+  final String _onBeforeHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileBeforeInteractive\",\"value\":\"true\"}));";
+  final String _onAfterHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileAfterInteractive\",\"value\":\"true\"}));";
+  final String _onTokenHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
+  final String _onErrorHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
+  final String _onExpireHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
+  final String _onCreatedHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
 
   ///首先进行controller的初始化，以便于控制webView
   void _initController() {
@@ -107,10 +115,19 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       )
 
       /// JavaScript execution is not restricted.(开启js,不限制js)
-      ..setJavaScriptMode(JavaScriptMode.unrestricted);
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
 
-    ///设置navigation的代理，监听，我们不需要的话，完全不需要设置
-    //..setNavigationDelegate(NavigationDelegate(onPageFinished: (String url) {}));
+      ///设置navigation的代理
+      ..setNavigationDelegate(NavigationDelegate(onNavigationRequest: (NavigationRequest request) async {
+        ///intent
+        if (request.url.contains("www.cloudflare.com") || request.url.contains("www.cloudflare-cn.com")) {
+          if (request.url.contains("privacypolicy") || request.url.contains("website-terms")) {
+            launchUrl(Uri.parse(request.url));
+            return NavigationDecision.prevent;
+          }
+        }
+        return NavigationDecision.navigate;
+      }));
 
     ///这里还有个点，这里定义的_controller 是用来控制webView的，它是不会向外部暴露的，而我们其实需要通过widget中的TurnstileController来控制webView内部的一些展示，
     ///所以需要将_controller 给到 widget.controller这个TurnstileController类型的控制器
@@ -129,6 +146,8 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       cData: widget.cData,
       options: widget.options,
       onTurnstileReady: _onReadyHandler,
+      onBeforeInteractive: _onBeforeHandler,
+      onAfterInteractive: _onAfterHandler,
       onTokenReceived: _onTokenHandler,
       onTurnstileError: _onErrorHandler,
       onTokenExpired: _onExpireHandler,
@@ -187,6 +206,16 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
 
         ///Turnstile ready的回调，我们没用同样直接通知到外部，之前的_isWidgetReady代码是之前用来在当前界面做动画的我们暂时没有用到就先删了
         widget.onWidgetReady?.call();
+        break;
+      case "TurnstileBeforeInteractive":
+
+        ///before interactive回调
+        widget.onWidgetBeforeInteractive?.call();
+        break;
+      case "TurnstileAfterInteractive":
+
+        ///after interactive回调
+        widget.onWidgetAfterInteractive?.call();
         break;
       case "TokenExpired":
 
