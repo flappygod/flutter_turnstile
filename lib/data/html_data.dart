@@ -7,6 +7,7 @@ Future<String> htmlData({
   required String siteKey,
   String? action,
   String? cData,
+  String   type = "io",
   required TurnstileOptions options,
   required String onTurnstileReady,
   required String onBeforeInteractive,
@@ -15,10 +16,11 @@ Future<String> htmlData({
   required String onTurnstileError,
   required String onTokenExpired,
   required String onWidgetCreated,
+
 }) async {
   ///正则匹配TURNSTILE_*类型的文本，分case进行替换
   RegExp exp = RegExp(
-      r'<TURNSTILE_(SITE_KEY|ACTION|CDATA|THEME|SIZE|LANGUAGE|RETRY|RETRY_INTERVAL|REFRESH_EXPIRED|REFRESH_TIMEOUT|READY|BEFORE_INTERACTIVE|AFTER_INTERACTIVE|TOKEN_RECEIVED|ERROR|TOKEN_EXPIRED|CREATED)>');
+      r'<TURNSTILE_(SITE_KEY|ACTION|CDATA|THEME|SIZE|LANGUAGE|RETRY|RETRY_INTERVAL|REFRESH_EXPIRED|REFRESH_TIMEOUT|READY|BEFORE_INTERACTIVE|AFTER_INTERACTIVE|TYPE|TOKEN_RECEIVED|ERROR|TOKEN_EXPIRED|CREATED)>');
 
   ///为了更直观，我们直接将source提出去到trunstile.html文件中去，然后在代码中把它加载进来，当然你得知道其路径。,因为这里是耗时操作，所以我们使用了 async ,返回也是Future<String>
   ByteData bytes =
@@ -56,6 +58,8 @@ Future<String> htmlData({
         return onBeforeInteractive;
       case 'AFTER_INTERACTIVE':
         return onAfterInteractive;
+      case 'TYPE':
+        return type;
       case 'TOKEN_RECEIVED':
         return onTokenReceived;
       case 'ERROR':

@@ -19,7 +19,6 @@
 <div id="cf-turnstile"></div>
 <script>
     function renderWidgets() {
-        turnstile.ready(function () {
             <TURNSTILE_READY>
             const widgetId = turnstile.render('#cf-turnstile', {
                 sitekey: '<TURNSTILE_SITE_KEY>',
@@ -49,15 +48,18 @@
                 },
             });
             <TURNSTILE_CREATED>
-        });
     }
 
     function checkReadyToRender() {
         turnstile.ready(function () {
-            if (BossJobAppBridge.postMessage) {
+            if( '<TURNSTILE_TYPE>' =='web' ){
+              renderWidgets();
+            }else{
+              if (BossJobAppBridge.postMessage) {
                 renderWidgets();
-            } else {
+              } else {
                 setTimeout(checkReadyToRender, 200);
+              }
             }
         });
     }

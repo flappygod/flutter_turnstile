@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_turnstile/widget/turnstile_widget.dart';
-import 'package:flutter_turnstile/controller/turnstile_controller.dart';
-import 'package:flutter_turnstile/options/turnstile_options.dart';
+import 'package:flutter_turnstile/flutter_turnstile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +22,6 @@ class _MyAppState extends State<MyApp> {
     retryAutomatically: false,
   );
 
-  String? _token;
 
   @override
   void dispose() {
@@ -51,9 +48,10 @@ class _MyAppState extends State<MyApp> {
               options: _options,
               controller: _controller,
               onTokenReceived: (token) {
-                setState(() {
-                  _token = token;
-                });
+
+              },
+              onWidgetReady: (){
+                print("onWidgetReady");
               },
               onWidgetBeforeInteractive: (){
                 print("AAAAAA");
@@ -63,9 +61,9 @@ class _MyAppState extends State<MyApp> {
               },
               onTokenExpired: () {},
               onError: (error) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                /*ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(error)),
-                );
+                );*/
               },
             ),
           )),

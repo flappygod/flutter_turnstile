@@ -1,5 +1,7 @@
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
+
+//ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js;
 
 ///自定义控制器
 ///  1. _connector 是我们的控件State 中设置进来的。
@@ -8,7 +10,7 @@ import 'package:flutter/material.dart';
 ///  js代码，以达到控制webView中加载的html trunstile 控件的目的
 class TurnstileController extends ChangeNotifier {
   ///设置进来的connector，设置了之后才能通过它进行一些列控制
-  WebViewController? _connector;
+  js.JsObject? _connector;
 
   ///同样的，设置进来的token ,用户保存html界面回调回来的token
   String? _token;
@@ -18,6 +20,9 @@ class TurnstileController extends ChangeNotifier {
 
   /// Get current token
   String? get token => _token;
+
+  ///is ready  or not
+  bool isReady = false;
 
   /// Sets a new connector.
   void setConnector(newConnector) {
@@ -49,7 +54,7 @@ class TurnstileController extends ChangeNotifier {
   /// ```
   Future<void> refreshToken() async {
     _token = null;
-    await _connector?.runJavaScript("""turnstile.reset(`$_widgetId`)""");
+    await _connector?.callMethod('eval', ['''turnstile.reset(`$_widgetId`);''']);
   }
 
   /// The function that check if a widget has expired by either
@@ -68,7 +73,10 @@ class TurnstileController extends ChangeNotifier {
   /// print(isTokenExpired);
   /// ```
   Future<bool> isExpired() async {
-    final result = await _connector?.runJavaScriptReturningResult("""turnstile.isExpired(`$_widgetId`);""");
-    return result.toString() == 'true';
+    if (!isReady || (_widgetId?.isEmpty ?? true) || token == null || token!.isEmpty) {
+      return true;
+    }
+    final result = _connector?.callMethod('eval', ['''turnstile.isExpired(`$_widgetId`);''']);
+    return Future.value(result as bool);
   }
 }

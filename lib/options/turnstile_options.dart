@@ -29,7 +29,10 @@ class TurnstileOptions {
   /// Refer to [list of supported languages](https://developers.cloudflare.com/turnstile/reference/supported-languages/) for more infrmation.
   final String language;
 
-  final TurnstileTheme theme;
+  /// The widget theme
+  ///
+  /// Default value is [TurnstileTheme.auto], witch respects the device brightness.
+  TurnstileTheme theme;
 
   /// Controls whether the widget should automatically retry to obtain
   /// a token if it did not succeed. The default value is true witch will
@@ -62,40 +65,116 @@ class TurnstileOptions {
     this.retryAutomatically = true,
     this.refreshExpired = TurnstileRefreshExpired.auto,
     this.refreshTimeout = TurnstileRefreshTimeout.auto,
-  })  : assert(
-            retryInterval.inMilliseconds > 0 &&
-                retryInterval.inMilliseconds <= 900000,
+  })  : assert(retryInterval.inMilliseconds > 0 && retryInterval.inMilliseconds <= 900000,
             "Duration must be greater than 0 and less than or equal to 900000 milliseconds."),
-        assert(
-            !(mode == TurnstileMode.invisible &&
-                refreshExpired == TurnstileRefreshExpired.manual),
+        assert(!(mode == TurnstileMode.invisible && refreshExpired == TurnstileRefreshExpired.manual),
             "$refreshExpired is impossible in $mode, consider using TurnstileRefreshExpired.auto or TurnstileRefreshExpired.never"),
-        assert(
-            !(mode == TurnstileMode.invisible &&
-                refreshTimeout != TurnstileRefreshTimeout.auto),
+        assert(!(mode == TurnstileMode.invisible && refreshTimeout != TurnstileRefreshTimeout.auto),
             "$refreshTimeout has no effect on an $mode widget."),
-        assert(
-            !(mode == TurnstileMode.nonInteractive &&
-                refreshTimeout != TurnstileRefreshTimeout.auto),
+        assert(!(mode == TurnstileMode.nonInteractive && refreshTimeout != TurnstileRefreshTimeout.auto),
             "$refreshTimeout has no effect on an $mode widget.");
 }
 
-enum TurnstileMode { managed, nonInteractive, invisible }
+enum TurnstileMode {
+  /// Managed Mode.
+  ///
+  /// The widget requires user interaction.
+  managed,
 
-enum TurnstileSize {
-  normal(300, 65),
-  compact(130, 120);
+  /// Non-Interaction mode.
+  ///
+  /// The widget does not require user interaction.
+  nonInteractive,
 
-  final double width;
-  final double height;
-  const TurnstileSize(this.width, this.height);
+  /// Invisible mode
+  ///
+  /// The widget is invisible to the user
+  invisible,
+
+  /// Auto mode.
+  ///
+  /// The widget automatically select the mode base on the context.
+  auto,
 }
 
-enum TurnstileTheme { auto, dark, light }
+/// Defines the sizes for the Cloudflare Turnstile widget.
+enum TurnstileSize {
+  /// Normal size.
+  ///
+  /// Dimensions: width 300, height 65.
+  normal(300, 65),
 
-enum TurnstileRefreshExpired { auto, manual, never }
+  /// Compact size.
+  ///
+  /// Dimensions: width 130, height 120.
+  compact(130, 120);
 
-enum TurnstileRefreshTimeout { auto, manual, never }
+  /// Creates a TurnstileSize with the specified width and height
+  const TurnstileSize(
+    this.width,
+    this.height,
+  );
+
+  /// The width of the widget.
+  final double width;
+
+  /// The height of the widget.
+  final double height;
+}
+
+/// Defines the themes for the Cloudflare Turnstile widget.
+enum TurnstileTheme {
+  /// Automatic theme.
+  ///
+  /// The theme is automatically selected based on the context.
+  auto,
+
+  /// Dark theme.
+  ///
+  /// The widget uses a dark theme.
+  dark,
+
+  /// Light theme.
+  ///
+  /// The widget uses a light theme.
+  light,
+}
+
+/// Defines the refresh behavior when the token expires.
+enum TurnstileRefreshExpired {
+  /// Automatic refresh.
+  ///
+  /// The widget automatically refreshes when the token expires.
+  auto,
+
+  /// Manual refresh.
+  ///
+  /// The widget requires manual refresh when the token expires.
+  manual,
+
+  /// Never refresh.
+  ///
+  /// The widget does not refresh when the token expires.
+  never,
+}
+
+/// Defines the refresh behavior when the token times out.
+enum TurnstileRefreshTimeout {
+  /// Automatic refresh.
+  ///
+  /// The widget automatically refreshes when the token times out.
+  auto,
+
+  /// Manual refresh.
+  ///
+  /// The widget requires manual refresh when the token times out.
+  manual,
+
+  /// Never refresh.
+  ///
+  /// The widget does not refresh when the token times out.
+  never,
+}
 
 ///function define
 typedef OnTokenReceived = Function(String token);
