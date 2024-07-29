@@ -118,16 +118,18 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
 
       ///设置navigation的代理
-      ..setNavigationDelegate(NavigationDelegate(onNavigationRequest: (NavigationRequest request) async {
-        ///intent
-        if (request.url.contains("www.cloudflare.com") || request.url.contains("www.cloudflare-cn.com")) {
-          if (request.url.contains("privacypolicy") || request.url.contains("website-terms")) {
-            launchUrl(Uri.parse(request.url));
-            return NavigationDecision.prevent;
+      ..setNavigationDelegate(NavigationDelegate(
+        onNavigationRequest: (NavigationRequest request) async {
+          ///intent
+          if (request.url.contains("www.cloudflare.com") || request.url.contains("www.cloudflare-cn.com")) {
+            if (request.url.contains("privacypolicy") || request.url.contains("website-terms")) {
+              launchUrl(Uri.parse(request.url));
+              return NavigationDecision.prevent;
+            }
           }
-        }
-        return NavigationDecision.navigate;
-      }));
+          return NavigationDecision.navigate;
+        },
+      ));
 
     ///这里还有个点，这里定义的_controller 是用来控制webView的，它是不会向外部暴露的，而我们其实需要通过widget中的TurnstileController来控制webView内部的一些展示，
     ///所以需要将_controller 给到 widget.controller这个TurnstileController类型的控制器

@@ -29,22 +29,22 @@
                 size: '<TURNSTILE_SIZE>',
                 language: '<TURNSTILE_LANGUAGE>',
                 retry: '<TURNSTILE_RETRY>',
-                retry-interval: parseInt('<TURNSTILE_RETRY_INTERVAL>'),
-                refresh-expired: '<TURNSTILE_REFRESH_EXPIRED>',
-                refresh-timeout: '<TURNSTILE_REFRESH_TIMEOUT>',
                 callback: function (token) {
                     <TURNSTILE_TOKEN_RECEIVED>
                 },
-                error-callback: function (code) {
+                'retry-interval': parseInt('<TURNSTILE_RETRY_INTERVAL>'),
+                'refresh-expired': '<TURNSTILE_REFRESH_EXPIRED>',
+                'refresh-timeout': '<TURNSTILE_REFRESH_TIMEOUT>',
+                'error-callback': function (code) {
                     <TURNSTILE_ERROR>
                 },
-                expired-callback: function () {
+                'expired-callback': function () {
                     <TURNSTILE_TOKEN_EXPIRED>
                 },
-                before-interactive-callback: function () {
+                'before-interactive-callback': function () {
                     <TURNSTILE_BEFORE_INTERACTIVE>
                 },
-                after-interactive-callback: function () {
+                'after-interactive-callback': function () {
                     <TURNSTILE_AFTER_INTERACTIVE>
                 },
             });

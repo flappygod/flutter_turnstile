@@ -55,6 +55,12 @@ class _MyAppState extends State<MyApp> {
                   _token = token;
                 });
               },
+              onWidgetBeforeInteractive: (){
+                print("AAAAAA");
+              },
+              onWidgetAfterInteractive: (){
+                print("BBBBBB");
+              },
               onTokenExpired: () {},
               onError: (error) {
                 ScaffoldMessenger.of(context).showSnackBar(
