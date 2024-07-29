@@ -125,7 +125,7 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
         onNavigationRequest: (NavigationRequest request) async {
           ///intent
           if (request.url.contains("www.cloudflare.com") || request.url.contains("www.cloudflare-cn.com")) {
-            if (request.url.contains("privacypolicy") || request.url.contains("website-terms")) {
+            if (request.url.contains("privacypolicy") || request.url.contains("website-terms") || request.url.contains("products")) {
               launchUrl(Uri.parse(request.url));
               return NavigationDecision.prevent;
             }
