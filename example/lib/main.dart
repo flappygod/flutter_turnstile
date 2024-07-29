@@ -43,10 +43,8 @@ class _MyAppState extends State<MyApp> {
             color: Colors.red,
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             child: CloudFlareTurnstile(
-              //siteKey: '3x00000000000000000000FF',
-              //baseUrl: "https://www.baidu.com",
-              siteKey: '0x4AAAAAAAJDRnSb5DfsUd2S',
-              baseUrl: "https://dev.api.bossjob.com",
+              siteKey: '3x00000000000000000000FF',
+              baseUrl: "https://www.baidu.com",
               options: _options,
               controller: _controller,
               onTokenReceived: (token) {
