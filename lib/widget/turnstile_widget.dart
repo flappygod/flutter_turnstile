@@ -159,7 +159,9 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       onWidgetCreated: _onCreatedHandler,
     ).then((data) {
       ///then中返回的就是htmlData这个方法中耗时操作完成后得到的拼接字符串
-      _webViewController.loadHtmlString(data, baseUrl: widget.baseUrl);
+      if (mounted) {
+        _webViewController.loadHtmlString(data, baseUrl: widget.baseUrl);
+      }
     });
   }
 
@@ -181,6 +183,11 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
 
   ///handle function
   void _handleJavaScriptChannel(String message) {
+    ///disposed
+    if (!mounted) {
+      return;
+    }
+
     ///解析我们传过来的json字符串为map
     Map data = jsonDecode(message);
 
