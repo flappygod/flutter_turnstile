@@ -175,6 +175,12 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   }
 
   @override
+  void dispose() {
+    widget.controller?.setConnector(null);
+    super.dispose();
+  }
+
+  @override
   void initState() {
     _initController();
     _initHtmlData();
