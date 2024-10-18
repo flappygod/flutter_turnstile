@@ -176,6 +176,8 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
 
   @override
   void dispose() {
+    _webViewController.loadRequest(Uri.parse('about:blank'));
+    _webViewController.removeJavaScriptChannel(appFunctionBridge);
     widget.controller?.setConnector(null);
     super.dispose();
   }
