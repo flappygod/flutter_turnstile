@@ -1,3 +1,2 @@
-## 1.1.1
-- Fixed some bugs
-- Added new features
+## 1.1.2
+- Fixed bugs when disposed 
