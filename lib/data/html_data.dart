@@ -7,7 +7,7 @@ Future<String> htmlData({
   required String siteKey,
   String? action,
   String? cData,
-  String   type = "app",
+  String type = "app",
   required TurnstileOptions options,
   required String onTurnstileReady,
   required String onBeforeInteractive,
@@ -16,7 +16,6 @@ Future<String> htmlData({
   required String onTurnstileError,
   required String onTokenExpired,
   required String onWidgetCreated,
-
 }) async {
   ///正则匹配TURNSTILE_*类型的文本，分case进行替换
   RegExp exp = RegExp(

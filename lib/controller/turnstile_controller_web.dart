@@ -54,7 +54,8 @@ class TurnstileController extends ChangeNotifier {
   /// ```
   Future<void> refreshToken() async {
     _token = null;
-    await _connector?.callMethod('eval', ['''turnstile.reset(`$_widgetId`);''']);
+    await _connector
+        ?.callMethod('eval', ['''turnstile.reset(`$_widgetId`);''']);
   }
 
   /// The function that check if a widget has expired by either
@@ -73,10 +74,14 @@ class TurnstileController extends ChangeNotifier {
   /// print(isTokenExpired);
   /// ```
   Future<bool> isExpired() async {
-    if (!isReady || (_widgetId?.isEmpty ?? true) || token == null || token!.isEmpty) {
+    if (!isReady ||
+        (_widgetId?.isEmpty ?? true) ||
+        token == null ||
+        token!.isEmpty) {
       return true;
     }
-    final result = _connector?.callMethod('eval', ['''turnstile.isExpired(`$_widgetId`);''']);
+    final result = _connector
+        ?.callMethod('eval', ['''turnstile.isExpired(`$_widgetId`);''']);
     return Future.value(result as bool);
   }
 }

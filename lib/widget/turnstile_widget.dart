@@ -92,15 +92,20 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   late WebViewController _webViewController;
 
   ///下方是字符串，这个字符串其实是一段js代码，用于和htmlData拼接，最终成为一个完整的html文件以供webView加载
-  final String _onReadyHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
+  final String _onReadyHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileReady\",\"value\":\"true\"}));";
   final String _onBeforeHandler =
       "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileBeforeInteractive\",\"value\":\"true\"}));";
   final String _onAfterHandler =
       "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileAfterInteractive\",\"value\":\"true\"}));";
-  final String _onTokenHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
-  final String _onErrorHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
-  final String _onExpireHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
-  final String _onCreatedHandler = "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
+  final String _onTokenHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileToken\",\"value\":token}));";
+  final String _onErrorHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileError\",\"value\":code}));";
+  final String _onExpireHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TokenExpired\"}));";
+  final String _onCreatedHandler =
+      "$appFunctionBridge.postMessage(JSON.stringify({\"method\":\"TurnstileWidgetId\",\"value\":widgetId}));";
 
   ///首先进行controller的初始化，以便于控制webView
   void _initController() {
@@ -124,8 +129,11 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
       ..setNavigationDelegate(NavigationDelegate(
         onNavigationRequest: (NavigationRequest request) async {
           ///intent
-          if (request.url.contains("www.cloudflare.com") || request.url.contains("www.cloudflare-cn.com")) {
-            if (request.url.contains("privacypolicy") || request.url.contains("website-terms") || request.url.contains("products")) {
+          if (request.url.contains("www.cloudflare.com") ||
+              request.url.contains("www.cloudflare-cn.com")) {
+            if (request.url.contains("privacypolicy") ||
+                request.url.contains("website-terms") ||
+                request.url.contains("products")) {
               launchUrl(Uri.parse(request.url));
               return NavigationDecision.prevent;
             }
@@ -254,7 +262,7 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
     ///normal和compact，所以我们这里暂时只能使用它的大小。
     return Listener(
       behavior: HitTestBehavior.translucent,
-      onPointerDown: (data){
+      onPointerDown: (data) {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: SizedBox(

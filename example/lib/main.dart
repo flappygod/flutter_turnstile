@@ -23,7 +23,6 @@ class _MyAppState extends State<MyApp> {
     refreshTimeout: TurnstileRefreshTimeout.manual,
   );
 
-
   @override
   void dispose() {
     super.dispose();
@@ -47,16 +46,14 @@ class _MyAppState extends State<MyApp> {
               baseUrl: "https://www.baidu.com",
               options: _options,
               controller: _controller,
-              onTokenReceived: (token) {
-
-              },
-              onWidgetReady: (){
+              onTokenReceived: (token) {},
+              onWidgetReady: () {
                 print("onWidgetReady");
               },
-              onWidgetBeforeInteractive: (){
+              onWidgetBeforeInteractive: () {
                 print("AAAAAA");
               },
-              onWidgetAfterInteractive: (){
+              onWidgetAfterInteractive: () {
                 print("BBBBBB");
               },
               onTokenExpired: () {},

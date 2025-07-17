@@ -122,7 +122,9 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
     if (widget.options.theme == TurnstileTheme.auto) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final brightness = MediaQuery.of(context).platformBrightness;
-        widget.options.theme = (brightness == Brightness.dark) ? TurnstileTheme.dark : TurnstileTheme.light;
+        widget.options.theme = (brightness == Brightness.dark)
+            ? TurnstileTheme.dark
+            : TurnstileTheme.light;
       });
     }
 
@@ -171,7 +173,8 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   /// Detects the widget mode and updates the state accordingly
   Future<void> _detectWidgetMode() async {
     if (widget.options.mode == TurnstileMode.auto) {
-      final result = jsWindowObject.callMethod('eval', ['getWidgetDimensions();']);
+      final result =
+          jsWindowObject.callMethod('eval', ['getWidgetDimensions();']);
       await Future.value(result).then((val) {
         final size = jsonDecode(val as String);
         final height = size['height'] as double;
@@ -246,7 +249,8 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
 
   /// Registers the view type for the IFrame
   void _registerView(String viewType) {
-    ui.platformViewRegistry.registerViewFactory(viewType, (int viewId) => iframe);
+    ui.platformViewRegistry
+        .registerViewFactory(viewType, (int viewId) => iframe);
   }
 
   /// JavaScript handler strings for various events
@@ -283,7 +287,9 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   String _embedWebIframeJsConnector(String source, String windowDisambiguator) {
     return _embedJsInHtmlSource(
       source,
-      {'parent.$_jsToDartConnectorFN$windowDisambiguator && parent.$_jsToDartConnectorFN$windowDisambiguator(window)'},
+      {
+        'parent.$_jsToDartConnectorFN$windowDisambiguator && parent.$_jsToDartConnectorFN$windowDisambiguator(window)'
+      },
     );
   }
 
@@ -296,7 +302,8 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
     final jsContent = jsContents.join(newLine * 2);
 
     //Create the script tag with embedded JavaScript
-    final whatToEmbed = '$newLine$scriptOpenTag$newLine$jsContent$newLine$scriptCloseTag$newLine';
+    final whatToEmbed =
+        '$newLine$scriptOpenTag$newLine$jsContent$newLine$scriptCloseTag$newLine';
     //Find the end of the head section
     final indexToSplit = source.indexOf('</head>');
     //Get the head section
