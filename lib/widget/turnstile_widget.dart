@@ -252,10 +252,16 @@ class _CloudFlareTurnstileState extends State<CloudFlareTurnstile> {
   Widget build(BuildContext context) {
     ///这里是主要的buildView ，分析trunstile.html 中的TURNSTILE_SIZE 及之前传递的 options.size.name 我们可以认为目前这html就只支持两种大小，
     ///normal和compact，所以我们这里暂时只能使用它的大小。
-    return SizedBox(
-      width: widget.options.size.width,
-      height: widget.options.size.height,
-      child: _view,
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (data){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: SizedBox(
+        width: widget.options.size.width,
+        height: widget.options.size.height,
+        child: _view,
+      ),
     );
   }
 }

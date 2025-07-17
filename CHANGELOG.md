@@ -1,2 +1,2 @@
-## 1.1.2
-- Fixed bugs when disposed 
+## 1.1.3
+- Fixed bugs when TextField show. 
